@@ -1,0 +1,62 @@
+# ───────────────────────────────────────────────────────────────────
+# Render Blueprint — FMPI Engine
+#
+# Deploy:  Render Dashboard → New → Blueprint → pick this repo → Apply.
+# Everything below is provisioned automatically: a managed PostgreSQL
+# instance, the web service, the DATABASE_URL wiring and the health check.
+#
+# No migration step is required — the app creates its own schema
+# idempotently on first database use (src/db/bootstrap.ts).
+# ───────────────────────────────────────────────────────────────────
+databases:
+  - name: fmpi-db
+    databaseName: fmpi
+    user: fmpi
+    plan: free
+    region: singapore
+
+services:
+  - type: web
+    name: fmpi-engine
+    runtime: node
+    plan: free
+    region: singapore # closest Render region to NSE/BSE for lower feed latency
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start # Next.js binds to $PORT automatically
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fmpi-db
+          property: connectionString
+      - key: NODE_VERSION
+        value: "22.11.0"
+      - key: NODE_ENV
+        value: production
+      # fromDatabase.connectionString is Render's same-region INTERNAL URL.
+      # Internal Postgres supports plaintext/private networking; explicitly
+      # avoid forcing TLS (external *-postgres.render.com URLs still auto-TLS).
+      - key: DATABASE_SSL
+        value: "false"
+      - key: PG_CONNECT_TIMEOUT_MS
+        value: "5000"
+      # Hard memory guardrails for Render's small/free instances.
+      - key: MARKET_CACHE_MAX
+        value: "64"
+      - key: OPTIONS_FRAME_CACHE_MAX
+        value: "2"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=320"
+      # Optional fallback token. Day-to-day you sign in from the app's
+      # top-left LOGIN button instead; that token is verified against
+      # Upstox and stored in the database, surviving restarts.
+      - key: UPSTOX_ACCESS_TOKEN
+        sync: false
+      # Recommended when the service is public: the login dialog then
+      # requires this passcode before a token can be saved or cleared.
+      - key: FMPI_ADMIN_PASSCODE
+        sync: false
+      # Optional tuning: max PostgreSQL pool connections (free tier is small).
+      - key: PGPOOL_MAX
+        value: "5"

@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #04070c;
+  --panel: #0a1018;
+  --panel-2: #0d1520;
+  --line: rgba(125, 165, 220, 0.1);
+  --line-strong: rgba(125, 165, 220, 0.22);
+  --txt: #dce6f2;
+  --txt-dim: #7d8ca3;
+  --txt-faint: #4a586e;
+  --bull: #2fd47b;
+  --bull-hot: #6dffa9;
+  --bear: #f0506e;
+  --bear-deep: #b32040;
+  --amber: #f5b53f;
+  --equil: #7c93b8;
+  --stale: #6b7280;
+  --accent: #41c8ff;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(65, 200, 255, 0.055), transparent 60%),
+    radial-gradient(1000px 600px at -10% 110%, rgba(47, 212, 123, 0.045), transparent 60%),
+    var(--bg);
+  color: var(--txt);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+/* mobile & tablet: the terminal becomes a scrollable single column */
+@media (max-width: 1023.98px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(16, 24, 36, 0.72), rgba(9, 14, 22, 0.88));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.panel-title {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--txt-faint);
+  font-weight: 600;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(125, 165, 220, 0.16);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(125, 165, 220, 0.3);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.82); }
+}
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(125, 165, 220, 0.04) 25%, rgba(125, 165, 220, 0.12) 50%, rgba(125, 165, 220, 0.04) 75%);
+  background-size: 1200px 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  animation: rise-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.seg-btn {
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: 6px;
+  color: var(--txt-dim);
+  transition: all 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.seg-btn.active {
+  color: #031018;
+  background: linear-gradient(180deg, #6fe0ff, #2fb9f0);
+  box-shadow: 0 0 18px rgba(65, 200, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.seg-btn:not(.active):hover {
+  color: var(--txt);
+  background: rgba(125, 165, 220, 0.08);
+}
+
+.row-hover:hover {
+  background: rgba(125, 165, 220, 0.055);
+}
+
+.bar-track {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(125, 165, 220, 0.1);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+canvas.chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
